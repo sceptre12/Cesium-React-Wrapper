@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Viewer, createWorldTerrain, Color, Cartesian3 } from "cesium";
+import { Viewer } from "cesium";
 import CesiumManager from "./cesiumShapes/CesiumManager";
 import { createRandomUUID, randomNumberFromInterval } from "./util/helper";
 import "./App.css";
@@ -20,6 +20,48 @@ class App extends Component {
             },
             color: "#A35A00",
             pixelSize: 10,
+            outlineColor: "#eeeeee",
+            outlineWidth: 4
+          }
+        },
+        rectangles: {
+          uuid7: {
+            id: "uuid7",
+            coordinates: [-110.0, 20.0, -80.0, 25.0],
+            color: "#A35A00",
+            outlineColor: "#eeeeee",
+            outlineWidth: 4
+          }
+        },
+        circles: {
+          uuid9: {
+            id: "uuid9",
+            positions: {
+              longitude: -103.0,
+              latitude: 40.0
+            },
+            radius: 300000,
+            color: "#A35A00",
+            outlineColor: "#eeeeee",
+            outlineWidth: 4
+          }
+        },
+        polygons: {
+          uuid8: {
+            id: "uuid8",
+            positions: [
+              -115.0,
+              37.0,
+              -115.0,
+              32.0,
+              -107.0,
+              33.0,
+              -102.0,
+              31.0,
+              -102.0,
+              35.0
+            ],
+            color: "#A35A00",
             outlineColor: "#eeeeee",
             outlineWidth: 4
           }
@@ -173,6 +215,9 @@ class App extends Component {
               viewer={viewer}
               points={data.points}
               polylines={data.polylines}
+              rectangles={data.rectangles}
+              polygons={data.polygons}
+              circles={data.circles}
             />
           ) : (
             undefined
