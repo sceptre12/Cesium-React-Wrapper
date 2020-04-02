@@ -3,17 +3,16 @@ import { Cartesian3, Color } from "cesium";
 
 import Point from "./point";
 
-const Polyline = memo(({ points, polyline, viewer }) => {
-  const { positions, color, width, id } = polyline;
+const Polyline = memo(({ points, polyline, viewer, isParentSelected }) => {
+  const { positions, color, width, id, isVisible } = polyline;
   const [isFirstRun, setIsFirstRun] = useState(true);
 
   // Runs on the first mount
   useEffect(() => {
     viewer.entities.add({
       id,
+      show: !!isParentSelected ? true : isVisible,
       polyline: {
-        clampToGround: true,
-        show: true,
         positions: Cartesian3.fromDegreesArray(positions),
         material: Color.fromCssColorString(color),
         width
@@ -31,9 +30,10 @@ const Polyline = memo(({ points, polyline, viewer }) => {
       let pointObj = viewer.entities.getById(id);
       pointObj.polyline.material = Color.fromCssColorString(color);
       pointObj.polyline.width = width;
+      pointObj.show = isVisible;
       pointObj.polyline.positions = Cartesian3.fromDegreesArray(positions);
     }
-  }, [positions, color, width, id, viewer]);
+  }, [positions, isVisible, color, width, id, viewer]);
 
   // Clean up viewer on unmount
   useEffect(
@@ -47,7 +47,12 @@ const Polyline = memo(({ points, polyline, viewer }) => {
     <Fragment>
       {!!points
         ? Object.keys(points).map((pointUUID, index) => (
-            <Point key={index} point={points[pointUUID]} viewer={viewer} />
+            <Point
+              key={index}
+              point={points[pointUUID]}
+              viewer={viewer}
+              isParentSelected={isVisible}
+            />
           ))
         : null}
     </Fragment>

@@ -1,8 +1,16 @@
 import React, { memo, useEffect, useState } from "react";
 import { Cartesian3, Color, HeightReference } from "cesium";
 
-const Circle = memo(({ circle, viewer }) => {
-  const { positions, radius, color, outlineColor, outlineWidth, id } = circle;
+const Circle = memo(({ circle, viewer, isParentSelected }) => {
+  const {
+    positions,
+    radius,
+    color,
+    outlineColor,
+    outlineWidth,
+    id,
+    isVisible
+  } = circle;
   const [isFirstRun, setIsFirstRun] = useState(true);
 
   // Runs on the first mount
@@ -10,9 +18,9 @@ const Circle = memo(({ circle, viewer }) => {
     viewer.entities.add({
       id,
       position: Cartesian3.fromDegrees(positions.longitude, positions.latitude),
+      show: !!isParentSelected ? true : isVisible,
       ellipse: {
         heightReference: HeightReference.CLAMP_TO_GROUND,
-        show: true,
         semiMinorAxis: radius,
         semiMajorAxis: radius,
         material: Color.fromCssColorString(color),
@@ -30,6 +38,7 @@ const Circle = memo(({ circle, viewer }) => {
   useEffect(() => {
     if (!!viewer && !isFirstRun) {
       let pointObj = viewer.entities.getById(id);
+      pointObj.show = isVisible;
       pointObj.position = Cartesian3.fromDegrees(
         positions.longitude,
         positions.latitude
@@ -41,7 +50,16 @@ const Circle = memo(({ circle, viewer }) => {
       pointObj.polygon.outlineColor = Color.fromCssColorString(outlineColor);
       pointObj.polygon.hierarchy = Cartesian3.fromDegreesArray(positions);
     }
-  }, [positions, radius, color, outlineWidth, outlineColor, id, viewer]);
+  }, [
+    positions,
+    isVisible,
+    radius,
+    color,
+    outlineWidth,
+    outlineColor,
+    id,
+    viewer
+  ]);
 
   // Clean up viewer on unmount
   useEffect(
